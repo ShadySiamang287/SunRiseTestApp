@@ -1,6 +1,7 @@
 #include "MainScene.h"
 
 #include <Graphics/ResourceFactory.h>
+#include <Graphics/GraphicsCommands.h>
 
 MainScene::MainScene() {
     mPipelineLayout = SUN::ResourceFactory::CreatePipelineLayout();
@@ -15,4 +16,16 @@ MainScene::MainScene() {
     mPipeline = SUN::ResourceFactory::CreatePipeline(pipelineConfig, mPipelineLayout);
 }
 
-void MainScene::Render() {}
+void MainScene::Render() {
+    using namespace SUN;
+    GraphicsCommands::BeginDraw();
+
+    GraphicsCommands::SetViewport();
+    GraphicsCommands::SetScissor();
+
+    GraphicsCommands::BindPipeline(mPipeline);
+    
+    GraphicsCommands::Draw(3, 1, 0, 0);
+    
+    GraphicsCommands::EndDraw();
+}
