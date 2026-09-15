@@ -13,7 +13,7 @@ MainScene::MainScene() {
         .fragName = "fragMain",
         .primitiveTopology = vk::PrimitiveTopology::eTriangleList
     };
-    mPipeline = SUN::ResourceFactory::CreatePipeline(pipelineConfig, mPipelineLayout);
+    mPipeline = SUN::ResourceFactory::CreatePipeline(pipelineConfig, mPipelineLayout, "Base pipeline");
 }
 
 void MainScene::Render() {
