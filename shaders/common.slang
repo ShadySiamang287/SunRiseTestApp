@@ -21,7 +21,8 @@ public struct GBufferOutput
 };
 
 public struct VSInput {
-    public float2 inPosition;
+    public float3 inPosition;
+    public float3 inNormal;
     public float3 inColor;
 };
 

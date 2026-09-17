@@ -57,30 +57,20 @@ MainScene::MainScene() {
         .primitiveTopology = vk::PrimitiveTopology::eTriangleList,
 
         .colorAttachmentFormats = {
-            vk::Format::eR16G16B16A16Sfloat,          // attachment 0
-            vk::Format::eR16G16B16A16Sfloat,          // attachment 1
             SUN::GraphicsCommands::GetSwapchainFormat()
         },
         .colorAttachmentLocations = {
-            vk::AttachmentUnused,
-            vk::AttachmentUnused,
-            2
-        },
-
-        .inputAttachmentIndices = {
-            0,
-            1,
-            vk::AttachmentUnused
+            0
         },
         .useVertexInput = false
     };
     mLightingPipeline = SUN::ResourceFactory::CreatePipeline(lighting, mLightingLayout, "Lighting Pipeline");
 
     const std::vector<SUN::Vertex> vertices = {
-        {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-        {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-        {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-        {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+        {{-0.5f, -0.5f, 1.f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+        {{0.5f, -0.5f, 1.f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+        {{0.5f, 0.5f, 1.f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}},
+        {{-0.5f, 0.5f, 1.f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}}
     };
 
     const std::vector<uint32_t> indices = {
