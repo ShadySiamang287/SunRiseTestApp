@@ -3,24 +3,78 @@
 #include <Graphics/ResourceFactory.h>
 #include <Graphics/GraphicsCommands.h>
 
-#include <Graphics/vertex.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 #include <chrono>
 
 MainScene::MainScene() {
+    std::array<vk::DescriptorSetLayoutBinding, 2> bindings;
+    bindings[0] = {
+        .binding = 0,
+        .descriptorType = vk::DescriptorType::eInputAttachment,
+        .descriptorCount = 1,
+        .stageFlags = vk::ShaderStageFlagBits::eFragment
+    };
+    bindings[1] = {
+        .binding = 1,
+        .descriptorType = vk::DescriptorType::eInputAttachment,
+        .descriptorCount = 1,
+        .stageFlags = vk::ShaderStageFlagBits::eFragment
+    };
+
+    mLightingDescriptors = SUN::ResourceFactory::CreateDescriptorResources(bindings);
+    mLightingLayout = SUN::ResourceFactory::CreatePipelineLayout(&mLightingDescriptors);
+
     mPipelineLayout = SUN::ResourceFactory::CreatePipelineLayout();
 
-    SUN::PipelineConfig pipelineConfig = {
+    SUN::PipelineConfig gBuffer = {
         .vertexFile = "./shaders/slang.spv",
         .vertexName = "vertMain",
         .fragFile =  "./shaders/slang.spv",
-        .fragName = "fragMain",
-        .primitiveTopology = vk::PrimitiveTopology::eTriangleList
+        .fragName = "gBufferFrag",
+        .primitiveTopology = vk::PrimitiveTopology::eTriangleList,
+        .colorAttachmentFormats = {
+            vk::Format::eR16G16B16A16Sfloat,
+            vk::Format::eR16G16B16A16Sfloat
+        },
+        .colorAttachmentLocations = {
+            0,
+            1
+        },
+        .depthAttachmentFormat = vk::Format::eD32Sfloat,
+        .useVertexInput = true
     };
-    mPipeline = SUN::ResourceFactory::CreatePipeline(pipelineConfig, mPipelineLayout, "Base pipeline");
+    mGbufferPipeline = SUN::ResourceFactory::CreatePipeline(gBuffer, mPipelineLayout, "GBuffer pipeline");
+
+    SUN::PipelineConfig lighting = {
+        .vertexFile = "./shaders/slang.spv",
+        .vertexName = "lightVert",
+        .fragFile = "./shaders/slang.spv",
+        .fragName = "lightFrag",
+
+        .primitiveTopology = vk::PrimitiveTopology::eTriangleList,
+
+        .colorAttachmentFormats = {
+            vk::Format::eR16G16B16A16Sfloat,          // attachment 0
+            vk::Format::eR16G16B16A16Sfloat,          // attachment 1
+            SUN::GraphicsCommands::GetSwapchainFormat()
+        },
+        .colorAttachmentLocations = {
+            vk::AttachmentUnused,
+            vk::AttachmentUnused,
+            2
+        },
+
+        .inputAttachmentIndices = {
+            0,
+            1,
+            vk::AttachmentUnused
+        },
+        .useVertexInput = false
+    };
+    mLightingPipeline = SUN::ResourceFactory::CreatePipeline(lighting, mLightingLayout, "Lighting Pipeline");
 
     const std::vector<SUN::Vertex> vertices = {
         {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
@@ -44,6 +98,9 @@ MainScene::~MainScene() {
 
 void MainScene::Update() {
     static auto startTime = std::chrono::high_resolution_clock::now();
+    static int frames = 0;
+    frames++;
+
 
     auto currentTime = std::chrono::high_resolution_clock::now();
     float time       = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
@@ -64,14 +121,41 @@ void MainScene::Render() {
     };
 
     GraphicsCommands::BeginDraw();
+    GraphicsCommands::WriteLightingDescriptorSets(mLightingDescriptors);
+
+    GraphicsCommands::BeginGBufferPass();
 
     GraphicsCommands::SetViewport();
     GraphicsCommands::SetScissor();
 
-    GraphicsCommands::BindPipeline(mPipeline);
+    GraphicsCommands::BindPipeline(mGbufferPipeline);
+
+    GraphicsCommands::SetDepthTestEnable(true);
+    GraphicsCommands::SetDepthWriteEnable(true);
+
     GraphicsCommands::BindGeometryBuffer(mMeshBuffer);
+
     GraphicsCommands::PushConstants(mPipelineLayout, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment,  pConstant);
     GraphicsCommands::Draw(6, 1, 0, 0, 0);
+    
+    GraphicsCommands::EndGBufferPass();
+    GraphicsCommands::BeginLightingPass();
+
+    GraphicsCommands::SetDepthTestEnable(false);
+    GraphicsCommands::SetDepthWriteEnable(false);
+
+    GraphicsCommands::BindPipeline(mLightingPipeline);
+    GraphicsCommands::BindDescriptorSets(mLightingLayout, mLightingDescriptors);
+    GraphicsCommands::Draw(
+        3,  // fullscreen triangle
+        1,
+        0,
+        0,
+        0
+    );
+
+    GraphicsCommands::EndLightingPass();
+
     
     GraphicsCommands::EndDraw();
 }
