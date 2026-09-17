@@ -51,7 +51,7 @@ set(SOURCES
 )
 
 set(HEADERS 
-
+    include/GameLayer.h
 )
 
 set(SHADER_SLANG_SOURCES

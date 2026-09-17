@@ -23,7 +23,7 @@ public:
     MainScene();
     ~MainScene() override;
 
-    void Update() override;
+    void Update(const float& dt) override;
     void Render() override;
 
 private:

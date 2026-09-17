@@ -86,7 +86,7 @@ MainScene::~MainScene() {
 
 }
 
-void MainScene::Update() {
+void MainScene::Update(const float& dt) {
     static auto startTime = std::chrono::high_resolution_clock::now();
     static int frames = 0;
     frames++;

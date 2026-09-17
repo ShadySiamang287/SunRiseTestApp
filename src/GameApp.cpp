@@ -1,12 +1,11 @@
 #include <EntryPoint.h>
-#include "MainScene.h"
+#include "GameLayer.h"
 
 class GameApp : public SUN::Application{
 public:
     GameApp(){
-        mCurrentScenePtr = std::make_unique<MainScene>();
+        PushLayer(std::make_unique<GameLayer>());
     }
-
 };
 
 SUN::Application* SUN::CreateApplication() {
