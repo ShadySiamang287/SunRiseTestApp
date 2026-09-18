@@ -5,6 +5,7 @@ public struct FrameData {
 
 public struct PushConstant {
     public FrameData *frameData;
+    public ObjectData *objectData;
 }
 
 public struct FullPassVertOut
@@ -31,6 +32,11 @@ public struct VSOutput
     public float3 color;
     public float3 normal;
 };
+
+public struct ObjectData {
+    public float4x4 model;
+    public float4x4 normalMatrix;
+}
 
 [[vk::push_constant]]
 public PushConstant pc;

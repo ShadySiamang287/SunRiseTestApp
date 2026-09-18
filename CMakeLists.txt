@@ -48,6 +48,7 @@ find_package(Vulkan REQUIRED)
 set(SOURCES 
     src/GameApp.cpp
     src/MainScene.cpp
+    src/FlyCamera.cpp
 )
 
 set(HEADERS 
@@ -73,4 +74,3 @@ add_slang_shader_target( Shaders
     COMMON_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/shaders/common.slang
 )
 add_dependencies(GameApp Shaders)
-target_compile_definitions(GameApp PRIVATE VULKAN_HPP_NO_STRUCT_CONSTRUCTORS)
