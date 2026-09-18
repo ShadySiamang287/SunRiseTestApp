@@ -18,14 +18,4 @@ public:
 
     void Update(const float& dt) override;
     void Render(SUN::RenderContext& context) override;
-
-private:
-    // SUN::DescriptorResources mLightingDescriptors; 
-    // vk::raii::Pipeline mGbufferPipeline = nullptr;
-    // vk::raii::Pipeline mLightingPipeline = nullptr;
-    // vk::raii::PipelineLayout mPipelineLayout = nullptr;
-    // vk::raii::PipelineLayout mLightingLayout = nullptr;
-    // SUN::GeometryBuffer mMeshBuffer;
-    // SUN::ShaderBuffer mFrameDataBuffer;
-    // FrameData mFrameData;
 };
