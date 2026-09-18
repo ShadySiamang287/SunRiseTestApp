@@ -18,9 +18,9 @@ public:
         mSceneManager.Update(dt);
     }
 
-    void OnRender() override
+    void OnRender(SUN::RenderContext& context) override
     {
-        mSceneManager.Render();
+        mSceneManager.Render(context);
     }
 
 private:

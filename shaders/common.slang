@@ -1,5 +1,4 @@
 public struct FrameData {
-    public float4x4 model;
     public float4x4 view;
     public float4x4 projection;
 }
