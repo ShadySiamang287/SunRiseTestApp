@@ -108,6 +108,7 @@ add_slang_shader_target(shaders
         "${CMAKE_CURRENT_SOURCE_DIR}/shaders/lightingVert.slang|lightVert"
         "${CMAKE_CURRENT_SOURCE_DIR}/shaders/lightingFrag.slang|lightFrag"
         "${CMAKE_CURRENT_SOURCE_DIR}/shaders/ToneMapping.slang|toneMappingFrag"
+        "${CMAKE_CURRENT_SOURCE_DIR}/shaders/bloom.slang|bloom"
 
     COMMON_SOURCES
         "${CMAKE_CURRENT_SOURCE_DIR}/shaders/common.slang"

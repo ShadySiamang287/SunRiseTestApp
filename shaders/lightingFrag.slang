@@ -12,6 +12,14 @@ Texture2D<float> gDepth;
 [[vk::binding(3, 0)]]
 SamplerState gSampler;
 
+[[vk::push_constant]]
+PushConstant pc;
+
+struct LightingOut {
+    float4 color : SV_Target0;
+    float4 bright : SV_Target1;
+}
+
 float3 ReconstructWorldPosition(float2 texCoord, float depth, FrameData frameData) {
     float2 ndc = texCoord * 2.0 - 1.0;
     ndc.y = 1.0f - texCoord.y * 2.0f;
@@ -78,17 +86,7 @@ float3 CalculatePointLight( PointLight light, float3 worldPosition, float3 norma
         * attenuation;
 }
 
-[shader("fragment")]
-float4 lightFrag(FullPassVertOut input) : SV_Target0 {
-    FrameData frameData = pc.frameData[0];
-
-    PointLight light = pc.pointLights[0];
-
-    float2 texCoord = float2(input.uv.x, 1.0 - input.uv.y);
-
-    float3 albedo = gAlbedo.SampleLevel(gSampler, texCoord, 0).xyz;
-    float3 normal = normalize(gNormal.SampleLevel(gSampler, texCoord, 0).xyz);
-    float depth = gDepth.SampleLevel(gSampler, texCoord, 0);
+float4 CalculateLighting(float2 texCoord, float3 albedo, float3 normal, float depth, FrameData frameData) {
 
     if (depth >= 1.0)
         return float4(0.02, 0.02, 0.02, 1.0);
@@ -104,5 +102,34 @@ float4 lightFrag(FullPassVertOut input) : SV_Target0 {
     for (uint i = 0; i < frameData.pointLightCount; ++i) {
         lighting += CalculatePointLight(pc.pointLights[i], worldPosition, normal, albedo);
     }
-    return float4(lighting, 1.0);
+
+    return float4(lighting, 1.f);
+}
+
+[shader("fragment")]
+LightingOut lightFrag(FullPassVertOut input) : SV_Target0 {
+    FrameData frameData = pc.frameData[0];
+
+
+    float2 texCoord = float2(input.uv.x, 1.0 - input.uv.y);
+
+    float3 albedo = gAlbedo.SampleLevel(gSampler, texCoord, 0).xyz;
+    float3 normal = normalize(gNormal.SampleLevel(gSampler, texCoord, 0).xyz);
+    float depth = gDepth.SampleLevel(gSampler, texCoord, 0);
+
+    LightingOut output;
+    float4 lighting = CalculateLighting(texCoord, albedo, normal, depth, frameData);
+    output.color = lighting;
+
+    float brightness = dot(
+        lighting.xyz,
+        float3(0.2126, 0.7152, 0.0722)
+    );
+
+    if (brightness > 1.0)
+        output.bright = lighting;
+    else
+        output.bright = float4(0.0, 0.0, 0.0, 1.0);
+
+    return output;
 }

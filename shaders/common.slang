@@ -58,6 +58,3 @@ public struct PointLight {
     public float4 positionRange;
     public float4 colorIntensity;
 }  
-
-[[vk::push_constant]]
-public PushConstant pc;

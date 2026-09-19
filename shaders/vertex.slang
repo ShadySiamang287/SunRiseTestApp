@@ -1,5 +1,8 @@
 import common;
 
+[[vk::push_constant]]
+PushConstant pc;
+
 [shader("vertex")]
 VSOutput vertMain(VSInput input,
                   uint instanceID: SV_VulkanInstanceID,
