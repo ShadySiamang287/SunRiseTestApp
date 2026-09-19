@@ -1,11 +1,22 @@
 public struct FrameData {
     public float4x4 view;
     public float4x4 projection;
+    public float4x4 inverseView;
+    public float4x4 inverseProjection;
+
+    public float4 cameraPosition;
+    public uint directionalLightCount;
+    public uint pointLightCount;
+    uint padding0;
+    uint padding1;
+
 }
 
 public struct PushConstant {
     public FrameData *frameData;
     public ObjectData *objectData;
+    public DirectionalLight *directionalLights;
+    public PointLight *pointLights;
 }
 
 public struct FullPassVertOut
@@ -37,6 +48,16 @@ public struct ObjectData {
     public float4x4 model;
     public float4x4 normalMatrix;
 }
+
+public struct DirectionalLight {
+    public float4 directionIntensity;
+    public float4 color;
+}
+
+public struct PointLight {
+    public float4 positionRange;
+    public float4 colorIntensity;
+}  
 
 [[vk::push_constant]]
 public PushConstant pc;
