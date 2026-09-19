@@ -10,12 +10,15 @@ public:
     void OnAttach() override
     {
         mSceneManager.LoadScene<MainScene>();
+        mSceneManager.ApplyPendingScene();
     }
 
     void OnUpdate(const float& dt) override
     {
         mSceneManager.HandleInput();
         mSceneManager.Update(dt);
+
+        mSceneManager.ApplyPendingScene();
     }
 
     void OnRender(SUN::RenderContext& context) override

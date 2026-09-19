@@ -48,7 +48,6 @@ MainScene::MainScene() {
         std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
         mesh->buffer.Init(verts.data(), verts.size() * sizeof(SUN::Vertex), sizeof(SUN::Vertex),
                           idx.data(), idx.size() * sizeof(uint32_t), vk::IndexType::eUint32);
-        mesh->indexCount = static_cast<uint32_t>(idx.size());
         return mesh;
     };
 
