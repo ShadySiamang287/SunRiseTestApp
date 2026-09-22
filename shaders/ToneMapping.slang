@@ -11,14 +11,11 @@ SamplerState gSampler;
 
 float3 ReinhardLuminance(float3 color)
 {
-    float luminance =
-        dot(color, float3(0.2126, 0.7152, 0.0722));
+    float luminance = dot(color, float3(0.2126, 0.7152, 0.0722));
 
-    float mappedLuminance =
-        luminance / (1.0 + luminance);
+    float mappedLuminance = luminance / (1.0 + luminance);
 
-    return color *
-           (mappedLuminance / max(luminance, 0.0001));
+    return color * (mappedLuminance / max(luminance, 0.0001));
 }
 
 [shader("fragment")]
@@ -32,7 +29,6 @@ float4 toneMappingFrag(FullPassVertOut input) : SV_Target0 {
 
     float3 combined = hdrColor + bloomColor * bloomStrength;
 
-    // ACES tone mapping
     float3 mappedColor = ReinhardLuminance(combined);
 
     return float4(mappedColor, 1.0);
