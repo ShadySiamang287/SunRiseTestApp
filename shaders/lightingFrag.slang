@@ -36,7 +36,9 @@ float3 CalculateDirectionalLight(DirectionalLight light, float3 normal, float3 a
     float3 lightDir = normalize(-light.directionIntensity.xyz);
     float intensity = light.directionIntensity.w;
     float3 colour = light.color.rgb;
+
     float NdotL = max(dot(normal, lightDir), 0.0);
+
     return albedo * colour * intensity * NdotL;
 }
 
