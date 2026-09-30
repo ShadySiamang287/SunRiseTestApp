@@ -4,7 +4,7 @@
 class GameApp : public SUN::Application{
 public:
     GameApp(){
-        PushLayer(std::make_unique<GameLayer>());
+        PushLayer(std::make_unique<GameLayer>(GetAssetManager()));
     }
 };
 

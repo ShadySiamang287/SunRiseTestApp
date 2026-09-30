@@ -3,14 +3,20 @@
 #include <SceneManagement/SceneManager.h>
 #include <SceneManagement/BindlessTextureTestScene.h>
 #include <Core/Layer.h>
+#include <AssetManagement/AssetManager.h>
 
 #include "MainScene.h"
 
 class GameLayer : public SUN::Layer{ 
 public:
+    explicit GameLayer(SUN::AssetManager& assetManager)
+        : mAssetManager(assetManager)
+    {
+    }
+
     void OnAttach() override
     {
-        mSceneManager.LoadScene<SUN::BindlessTextureTestScene>();
+        mSceneManager.LoadScene<SUN::BindlessTextureTestScene>(mAssetManager);
         mSceneManager.ApplyPendingScene();
     }
 
@@ -28,5 +34,6 @@ public:
     }
 
 private:
+    SUN::AssetManager& mAssetManager;
     SUN::SceneManager mSceneManager;
 };
