@@ -12,6 +12,9 @@ Texture2D<float4> gNormal;
 Texture2D<float> gDepth;
 
 [[vk::binding(3, 0)]]
+Texture2D<float> gSSAO;
+
+[[vk::binding(4, 0)]]
 SamplerState gSampler;
 
 [[vk::push_constant]]
@@ -74,14 +77,14 @@ float3 CalculatePointLight( PointLight light, float3 worldPosition, float3 norma
     return EvaluateBRDF(normal, viewDirection, lightDirection, albedo, metallic, roughness, radiance);
 }
 
-float4 CalculateLighting(float2 texCoord, float3 albedo, float3 normal, float metallic, float roughness, float depth, FrameData frameData) {
+float4 CalculateLighting(float2 texCoord, float3 albedo, float3 normal, float metallic, float roughness, float depth, float occlusion, FrameData frameData) {
 
     if (depth >= 1.0)
         return float4(0.02, 0.02, 0.02, 1.0);
 
     float3 worldPosition = ReconstructWorldPosition(texCoord, depth, frameData);
 
-    float3 lighting = albedo * 0.03;
+    float3 lighting = albedo * 0.03 * occlusion;
 
     float3 viewDirection = normalize(frameData.cameraPosition.xyz - worldPosition);
 
@@ -109,6 +112,8 @@ LightingOut lightFrag(FullPassVertOut input) : SV_Target0 {
     float3 albedo = albedoSample.rgb;
     float3 normal = normalize(normalSample.rgb);
 
+    float occlusion = gSSAO.Sample(gSampler, texCoord);
+
     float metallic = albedoSample.a;
     metallic = saturate(metallic);
     float roughness = normalSample.a;
@@ -116,7 +121,7 @@ LightingOut lightFrag(FullPassVertOut input) : SV_Target0 {
     float depth = gDepth.SampleLevel(gSampler, texCoord, 0);
 
     LightingOut output;
-    float4 lighting = CalculateLighting(texCoord, albedo, normal, metallic, roughness, depth, frameData);
+    float4 lighting = CalculateLighting(texCoord, albedo, normal, metallic, roughness, depth, occlusion, frameData);
     output.color = lighting;
 
     float brightness = dot(
