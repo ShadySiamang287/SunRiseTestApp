@@ -2,6 +2,7 @@
 
 #include <Graphics/ResourceFactory.h>
 #include <Graphics/GraphicsCommands.h>
+#include <AssetManagement/AssetManager.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,7 +17,7 @@
 
 #include "FlyCameraSystem.h"
 
-MainScene::MainScene() {
+MainScene::MainScene(SUN::AssetManager& assetManager) {
     using namespace SUN;
 
     // -------------------------------------------------------------------------
@@ -24,11 +25,11 @@ MainScene::MainScene() {
     // -------------------------------------------------------------------------
 
     const std::vector<Vertex> vertices = {
-        // position               normal            colour
-        {{-0.5f, -0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.0f, 1.0f, 1.0f}},
-        {{ 0.5f, -0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.0f, 1.0f, 1.0f}},
-        {{ 0.5f,  0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.0f, 1.0f, 1.0f}},
-        {{-0.5f,  0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.0f, 1.0f, 1.0f}}
+        // position               normal            colour              uv
+        {{-0.5f, -0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+        {{ 0.5f, -0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+        {{ 0.5f,  0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+        {{-0.5f,  0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}}
     };
 
     const std::vector<uint32_t> indices = {
@@ -47,6 +48,17 @@ MainScene::MainScene() {
         indices.size() * sizeof(uint32_t),
 
         vk::IndexType::eUint32
+    );
+
+
+    const AssetID checkerTexture = assetManager.LoadTexture(
+        "assets/textures/bindless_test_checker.png",
+        true
+    );
+
+    const AssetID stripeTexture = assetManager.LoadTexture(
+        "assets/textures/bindless_test_stripes.png",
+        true
     );
 
 
@@ -78,12 +90,16 @@ MainScene::MainScene() {
             const std::string& name,
             glm::vec3 position,
             glm::vec3 scale,
-            glm::quat rotation)
+            glm::quat rotation,
+            AssetID albedoTexture)
         {
             Entity entity = CreateEntity(name);
 
             entity.AddComponent<MeshComponent>().mesh =
                 mesh;
+
+            entity.AddComponent<MaterialComponent>().AlbedoTexture =
+                albedoTexture;
 
             auto& transform =
                 entity.GetComponent<TransformComponent>();
@@ -105,7 +121,8 @@ MainScene::MainScene() {
         "Centre",
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(1.5f),
-        glm::quat(1.0f, 0.0f, 0.0f, 0.0f)
+        glm::quat(1.0f, 0.0f, 0.0f, 0.0f),
+        checkerTexture
     );
 
     // Tilted around Y.
@@ -117,7 +134,8 @@ MainScene::MainScene() {
         glm::angleAxis(
             glm::radians(-45.0f),
             glm::vec3(0.0f, 1.0f, 0.0f)
-        )
+        ),
+        stripeTexture
     );
 
     // Tilted the other direction.
@@ -128,7 +146,8 @@ MainScene::MainScene() {
         glm::angleAxis(
             glm::radians(45.0f),
             glm::vec3(0.0f, 1.0f, 0.0f)
-        )
+        ),
+        checkerTexture
     );
 
     // Non-uniform scaling test.
@@ -140,7 +159,8 @@ MainScene::MainScene() {
         glm::angleAxis(
             glm::radians(30.0f),
             glm::vec3(1.0f, 0.0f, 0.0f)
-        )
+        ),
+        stripeTexture
     );
 
 

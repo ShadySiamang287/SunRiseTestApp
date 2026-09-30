@@ -9,9 +9,11 @@
 
 #include <Graphics/vertex.h>
 
+namespace SUN { class AssetManager; }
+
 class MainScene : public SUN::BaseScene{
 public:
-    MainScene();
+    explicit MainScene(SUN::AssetManager& assetManager);
     ~MainScene() override;
 
     void Update(const float& dt) override;

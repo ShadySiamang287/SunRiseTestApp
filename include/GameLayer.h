@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SceneManagement/SceneManager.h>
-#include <SceneManagement/BindlessTextureTestScene.h>
 #include <Core/Layer.h>
 #include <AssetManagement/AssetManager.h>
 
@@ -16,7 +15,7 @@ public:
 
     void OnAttach() override
     {
-        mSceneManager.LoadScene<SUN::BindlessTextureTestScene>(mAssetManager);
+        mSceneManager.LoadScene<MainScene>(mAssetManager);
         mSceneManager.ApplyPendingScene();
     }
 

@@ -111,17 +111,6 @@ add_custom_command(
     COMMENT "Copying assets to output directory"
 )
 
-add_custom_command(
-    TARGET GameApp
-    POST_BUILD
-
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_CURRENT_SOURCE_DIR}/assets"
-        "$<TARGET_FILE_DIR:GameApp>/assets"
-
-    COMMENT "Copying assets to output directory"
-)
-
 target_link_libraries(GameApp PUBLIC SunriseEngine Vulkan::Headers)
 target_include_directories(GameApp PUBLIC ${PROJECT_SOURCE_DIR}/include)
 add_slang_shader_target(shaders
