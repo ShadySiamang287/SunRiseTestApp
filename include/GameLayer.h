@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SceneManagement/SceneManager.h>
+#include <SceneManagement/BindlessTextureTestScene.h>
 #include <Core/Layer.h>
 
 #include "MainScene.h"
@@ -9,7 +10,7 @@ class GameLayer : public SUN::Layer{
 public:
     void OnAttach() override
     {
-        mSceneManager.LoadScene<MainScene>();
+        mSceneManager.LoadScene<SUN::BindlessTextureTestScene>();
         mSceneManager.ApplyPendingScene();
     }
 

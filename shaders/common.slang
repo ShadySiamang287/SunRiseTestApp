@@ -35,6 +35,7 @@ public struct VSInput {
     public float3 inPosition;
     public float3 inNormal;
     public float3 inColor;
+    public float2 inUV;
 };
 
 public struct VSOutput
@@ -42,11 +43,17 @@ public struct VSOutput
     public float4 pos : SV_Position;
     public float3 color;
     public float3 normal;
+    public float2 uv;
+    public nointerpolation uint albedoTextureIndex;
 };
 
 public struct ObjectData {
     public float4x4 model;
     public float4x4 normalMatrix;
+    public uint albedoTextureIndex;
+    uint padding0;
+    uint padding1;
+    uint padding2;
 }
 
 public struct DirectionalLight {
