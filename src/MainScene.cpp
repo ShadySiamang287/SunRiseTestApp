@@ -147,6 +147,101 @@ MainScene::MainScene(SUN::AssetManager& assetManager) {
             glm::radians(-35.0f),
             glm::vec3(1.0f, 0.0f, 0.0f)
         );
+
+    // -------------------------------------------------------------------------
+    // Point lights distributed through the atrium.
+    // These are intentionally placed in pairs so roughness/metallic response
+    // can be compared across both sides of the scene.
+    // -------------------------------------------------------------------------
+
+    auto spawnPointLight =
+        [this](
+            const std::string& name,
+            const glm::vec3& position,
+            const glm::vec3& colour,
+            float intensity,
+            float range)
+        {
+            Entity lightEntity = CreateEntity(name);
+
+            auto& light =
+                lightEntity.AddComponent<PointLightComponent>();
+
+            light.Colour = colour;
+            light.intensity = intensity;
+            light.range = range;
+
+            lightEntity
+                .GetComponent<TransformComponent>()
+                .Position = position;
+        };
+
+    constexpr float pointIntensity = 120.0f;
+    constexpr float pointRange = 10.0f;
+
+    spawnPointLight(
+        "Point Light Left Front",
+        {-4.0f, 2.5f, 6.0f},
+        {1.0f, 0.72f, 0.52f},
+        pointIntensity,
+        pointRange
+    );
+
+    spawnPointLight(
+        "Point Light Right Front",
+        {4.0f, 2.5f, 6.0f},
+        {0.52f, 0.72f, 1.0f},
+        pointIntensity,
+        pointRange
+    );
+
+    spawnPointLight(
+        "Point Light Left Centre",
+        {-4.0f, 2.5f, 0.0f},
+        {1.0f, 0.85f, 0.65f},
+        pointIntensity,
+        pointRange
+    );
+
+    spawnPointLight(
+        "Point Light Right Centre",
+        {4.0f, 2.5f, 0.0f},
+        {0.65f, 0.85f, 1.0f},
+        pointIntensity,
+        pointRange
+    );
+
+    spawnPointLight(
+        "Point Light Left Rear",
+        {-4.0f, 2.5f, -6.0f},
+        {1.0f, 0.72f, 0.52f},
+        pointIntensity,
+        pointRange
+    );
+
+    spawnPointLight(
+        "Point Light Right Rear",
+        {4.0f, 2.5f, -6.0f},
+        {0.52f, 0.72f, 1.0f},
+        pointIntensity,
+        pointRange
+    );
+
+    spawnPointLight(
+        "Point Light Upper Front",
+        {0.0f, 6.0f, 5.0f},
+        {1.0f, 0.95f, 0.85f},
+        160.0f,
+        12.0f
+    );
+
+    spawnPointLight(
+        "Point Light Upper Rear",
+        {0.0f, 6.0f, -5.0f},
+        {1.0f, 0.95f, 0.85f},
+        160.0f,
+        12.0f
+    );
 }
 
 MainScene::~MainScene() {
