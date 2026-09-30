@@ -36,6 +36,7 @@ public struct VSInput {
     public float3 inNormal;
     public float3 inColor;
     public float2 inUV;
+    public float4 inTangent;
 };
 
 public struct VSOutput
@@ -44,16 +45,27 @@ public struct VSOutput
     public float3 color;
     public float3 normal;
     public float2 uv;
+    public float4 tangent;
     public nointerpolation uint albedoTextureIndex;
+    public nointerpolation uint normalTextureIndex;
+    public nointerpolation uint materialTextureIndex;
+
+    public nointerpolation float metallicFactor;
+    public nointerpolation float roughnessFactor;
 };
 
 public struct ObjectData {
     public float4x4 model;
     public float4x4 normalMatrix;
     public uint albedoTextureIndex;
+    public uint normalTextureIndex;
+    public uint materialTextureIndex;
+
+    public float metalicFactor;
+    public float roughnessFactor;
+
     uint padding0;
     uint padding1;
-    uint padding2;
 }
 
 public struct DirectionalLight {

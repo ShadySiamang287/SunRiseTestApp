@@ -12,9 +12,32 @@ VSOutput vertMain(VSInput input,uint instanceID: SV_VulkanInstanceID) {
     
     VSOutput output;
     output.pos = mul(frameData.projection, mul(frameData.view, worldPos));
-    output.normal = normalize(mul((float3x3)obj.normalMatrix, input.inNormal)); // Use the input normal value
+    float3 N = normalize(
+      mul(
+          (float3x3)obj.normalMatrix,
+          input.inNormal
+      )
+    );
+
+    float3 T = normalize(
+      mul(
+          (float3x3)obj.model,
+          input.inTangent.xyz
+      )
+    );
+
+    T = normalize(T - N * dot(N, T));
+
+    output.normal = N;
+    output.tangent = float4(T, input.inTangent.w);
     output.color = input.inColor;
     output.uv = input.inUV;
+
     output.albedoTextureIndex = obj.albedoTextureIndex;
+    output.normalTextureIndex = obj.normalTextureIndex;
+    output.materialTextureIndex = obj.materialTextureIndex;
+
+    output.metallicFactor = obj.metalicFactor;
+    output.roughnessFactor = obj.roughnessFactor;
     return output;
 }

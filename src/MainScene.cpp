@@ -14,6 +14,8 @@
 #include <SceneManagement/Systems/RenderSystem.h>
 #include <SceneManagement/Components.h>
 
+#include <Logger.h>
+
 #include "FlyCameraSystem.h"
 
 MainScene::MainScene(SUN::AssetManager& assetManager) {
@@ -41,7 +43,7 @@ MainScene::MainScene(SUN::AssetManager& assetManager) {
     // -------------------------------------------------------------------------
 
     const std::filesystem::path sponzaPath =
-        "assets/models/Sponza/glTF/Sponza.gltf";
+        "assets/glTF/Spoonza/sponza.glb";
 
     if (auto sponza = assetManager.LoadModel(sponzaPath)) {
         for (const auto& primitive : sponza->primitives) {
@@ -52,9 +54,12 @@ MainScene::MainScene(SUN::AssetManager& assetManager) {
 
             meshComponent.mesh = primitive.mesh;
             meshComponent.LocalTransform = primitive.transform;
-
-            entity.AddComponent<MaterialComponent>().AlbedoTexture =
-                primitive.albedoTexture;
+            auto& material = entity.AddComponent<MaterialComponent>();
+            material.AlbedoTexture = primitive.albedoTexture;
+            material.NormalTexture = primitive.normalTexture;
+            material.MaterialTexture = primitive.materialTexture;
+            material.metalicFactor = primitive.metalicFactor;
+            material.roughnessFactor = primitive.roughnessFactor;
         }
     } else {
         // ---------------------------------------------------------------------
