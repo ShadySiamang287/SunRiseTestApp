@@ -57,84 +57,7 @@ MainScene::MainScene(SUN::AssetManager& assetManager) {
             entity.AddComponent<MaterialComponent>().material =
                 primitive.material;
         }
-    } else {
-        // ---------------------------------------------------------------------
-        // Fallback bindless-texture test when Sponza has not been copied yet.
-        // ---------------------------------------------------------------------
-
-        const std::vector<Vertex> vertices = {
-            // position               normal            uv
-            {{-0.5f, -0.5f, 0.0f}, {0.f, 0.f, 1.f}, {0.f, 1.f}},
-            {{ 0.5f, -0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.f, 1.f}},
-            {{ 0.5f,  0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.f, 0.f}},
-            {{-0.5f,  0.5f, 0.0f}, {0.f, 0.f, 1.f}, {0.f, 0.f}}
-        };
-
-        const std::vector<uint32_t> indices = {
-            0, 1, 2,
-            2, 3, 0
-        };
-
-        auto mesh = std::make_shared<Mesh>();
-        mesh->buffer.Init(
-            vertices.data(),
-            vertices.size() * sizeof(Vertex),
-            sizeof(Vertex),
-            indices.data(),
-            indices.size() * sizeof(uint32_t),
-            vk::IndexType::eUint32
-        );
-
-        const AssetID checkerTexture = assetManager.LoadTexture(
-            "assets/textures/bindless_test_checker.png",
-            true
-        );
-
-        const AssetID stripeTexture = assetManager.LoadTexture(
-            "assets/textures/bindless_test_stripes.png",
-            true
-        );
-
-        MaterialDescription checkerMaterialDescription;
-        checkerMaterialDescription.albedoTexture = checkerTexture;
-
-        const MaterialID checkerMaterial =
-            assetManager.GetOrCreateMaterial(checkerMaterialDescription);
-
-        MaterialDescription stripeMaterialDescription;
-        stripeMaterialDescription.albedoTexture = stripeTexture;
-
-        const MaterialID stripeMaterial =
-            assetManager.GetOrCreateMaterial(stripeMaterialDescription);
-
-        auto spawnPlane =
-            [this, &mesh](
-                const std::string& name,
-                glm::vec3 position,
-                MaterialID material)
-            {
-                Entity entity = CreateEntity(name);
-
-                entity.AddComponent<MeshComponent>().mesh = mesh;
-                entity.AddComponent<MaterialComponent>().material =
-                    material;
-
-                entity.GetComponent<TransformComponent>().Position =
-                    position;
-            };
-
-        spawnPlane(
-            "Checker",
-            glm::vec3(-1.0f, 0.0f, 0.0f),
-            checkerMaterial
-        );
-
-        spawnPlane(
-            "Stripes",
-            glm::vec3(1.0f, 0.0f, 0.0f),
-            stripeMaterial
-        );
-    }
+    } 
 
     // -------------------------------------------------------------------------
     // Lighting
@@ -183,6 +106,7 @@ MainScene::MainScene(SUN::AssetManager& assetManager) {
             light.Colour = colour;
             light.intensity = intensity;
             light.range = range;
+            light.CastShadows = true;
 
             lightEntity
                 .GetComponent<TransformComponent>()
