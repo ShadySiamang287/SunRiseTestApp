@@ -9,12 +9,12 @@ public struct FrameData {
     public uint pointLightCount;
     uint padding0;
     uint padding1;
-
 }
 
 public struct PushConstant {
     public FrameData *frameData;
     public ObjectData *objectData;
+    public MaterialData *materialData;
     public DirectionalLight *directionalLights;
     public PointLight *pointLights;
 }
@@ -34,7 +34,6 @@ public struct GBufferOutput
 public struct VSInput {
     public float3 inPosition;
     public float3 inNormal;
-    public float3 inColor;
     public float2 inUV;
     public float4 inTangent;
 };
@@ -42,30 +41,33 @@ public struct VSInput {
 public struct VSOutput
 {
     public float4 pos : SV_Position;
-    public float3 color;
     public float3 normal;
     public float2 uv;
     public float4 tangent;
-    public nointerpolation uint albedoTextureIndex;
-    public nointerpolation uint normalTextureIndex;
-    public nointerpolation uint materialTextureIndex;
-
-    public nointerpolation float metallicFactor;
-    public nointerpolation float roughnessFactor;
+    public nointerpolation uint materialIndex;
 };
 
 public struct ObjectData {
     public float4x4 model;
     public float4x4 normalMatrix;
+    public uint materialIndex;
+    uint padding0;
+    uint padding1;
+    uint padding2;
+}
+
+public struct MaterialData {
+    public float4 baseColorFactor;
+
     public uint albedoTextureIndex;
     public uint normalTextureIndex;
     public uint materialTextureIndex;
+    public float metallicFactor;
 
-    public float metalicFactor;
     public float roughnessFactor;
-
     uint padding0;
     uint padding1;
+    uint padding2;
 }
 
 public struct DirectionalLight {
@@ -76,4 +78,4 @@ public struct DirectionalLight {
 public struct PointLight {
     public float4 positionRange;
     public float4 colorIntensity;
-}  
+}

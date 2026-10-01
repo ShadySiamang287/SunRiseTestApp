@@ -54,12 +54,8 @@ MainScene::MainScene(SUN::AssetManager& assetManager) {
 
             meshComponent.mesh = primitive.mesh;
             meshComponent.LocalTransform = primitive.transform;
-            auto& material = entity.AddComponent<MaterialComponent>();
-            material.AlbedoTexture = primitive.albedoTexture;
-            material.NormalTexture = primitive.normalTexture;
-            material.MaterialTexture = primitive.materialTexture;
-            material.metalicFactor = primitive.metalicFactor;
-            material.roughnessFactor = primitive.roughnessFactor;
+            entity.AddComponent<MaterialComponent>().material =
+                primitive.material;
         }
     } else {
         // ---------------------------------------------------------------------
@@ -67,11 +63,11 @@ MainScene::MainScene(SUN::AssetManager& assetManager) {
         // ---------------------------------------------------------------------
 
         const std::vector<Vertex> vertices = {
-            // position               normal            colour              uv
-            {{-0.5f, -0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.f, 1.f, 1.f}, {0.f, 1.f}},
-            {{ 0.5f, -0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.f, 1.f, 1.f}, {1.f, 1.f}},
-            {{ 0.5f,  0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.f, 1.f, 1.f}, {1.f, 0.f}},
-            {{-0.5f,  0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.f, 1.f, 1.f}, {0.f, 0.f}}
+            // position               normal            uv
+            {{-0.5f, -0.5f, 0.0f}, {0.f, 0.f, 1.f}, {0.f, 1.f}},
+            {{ 0.5f, -0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.f, 1.f}},
+            {{ 0.5f,  0.5f, 0.0f}, {0.f, 0.f, 1.f}, {1.f, 0.f}},
+            {{-0.5f,  0.5f, 0.0f}, {0.f, 0.f, 1.f}, {0.f, 0.f}}
         };
 
         const std::vector<uint32_t> indices = {
@@ -99,17 +95,29 @@ MainScene::MainScene(SUN::AssetManager& assetManager) {
             true
         );
 
+        MaterialDescription checkerMaterialDescription;
+        checkerMaterialDescription.albedoTexture = checkerTexture;
+
+        const MaterialID checkerMaterial =
+            assetManager.GetOrCreateMaterial(checkerMaterialDescription);
+
+        MaterialDescription stripeMaterialDescription;
+        stripeMaterialDescription.albedoTexture = stripeTexture;
+
+        const MaterialID stripeMaterial =
+            assetManager.GetOrCreateMaterial(stripeMaterialDescription);
+
         auto spawnPlane =
             [this, &mesh](
                 const std::string& name,
                 glm::vec3 position,
-                AssetID albedoTexture)
+                MaterialID material)
             {
                 Entity entity = CreateEntity(name);
 
                 entity.AddComponent<MeshComponent>().mesh = mesh;
-                entity.AddComponent<MaterialComponent>().AlbedoTexture =
-                    albedoTexture;
+                entity.AddComponent<MaterialComponent>().material =
+                    material;
 
                 entity.GetComponent<TransformComponent>().Position =
                     position;
@@ -118,13 +126,13 @@ MainScene::MainScene(SUN::AssetManager& assetManager) {
         spawnPlane(
             "Checker",
             glm::vec3(-1.0f, 0.0f, 0.0f),
-            checkerTexture
+            checkerMaterial
         );
 
         spawnPlane(
             "Stripes",
             glm::vec3(1.0f, 0.0f, 0.0f),
-            stripeTexture
+            stripeMaterial
         );
     }
 
