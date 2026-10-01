@@ -77,9 +77,21 @@ public struct MaterialData {
 public struct DirectionalLight {
     public float4 directionIntensity;
     public float4 color;
+
+    public float4x4 lightViewProjection;
+
+    public uint shadowIndex;
+    public uint castsShadows;
+    uint padding0;
+    uint padding1;
 }
 
 public struct PointLight {
     public float4 positionRange;
     public float4 colorIntensity;
+
+    public uint shadowIndex;
+    public uint castsShadows;
+    uint padding0;
+    uint padding1;
 }
