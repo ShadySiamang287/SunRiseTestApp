@@ -23,11 +23,13 @@ float4 toneMappingFrag(FullPassVertOut input) : SV_Target0 {
     float2 texCoord = float2(input.uv.x, 1.0 - input.uv.y);
     float3 hdrColor = hdrIn.SampleLevel(gSampler, texCoord, 0).xyz;
 
+    float exposure = 0.5;
     float3 bloomColor = bloomIn.SampleLevel(gSampler, texCoord, 0).rgb;
 
     float bloomStrength = 0.1;
 
     float3 combined = hdrColor + bloomColor * bloomStrength;
+    combined *= exposure;
 
     float3 mappedColor = ReinhardLuminance(combined);
 
