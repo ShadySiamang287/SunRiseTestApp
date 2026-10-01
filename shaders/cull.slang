@@ -14,6 +14,7 @@ struct CullPushConstant
     FrameData* frameData;
     ObjectData* objectData;
     DrawIndexedIndirectCommand* indirectCommands;
+    uint* visibleDrawCount;
     uint objectCount;
     uint padding;
 };
@@ -111,18 +112,28 @@ void cullMain(
     ObjectData objectData =
         pc.objectData[objectIndex];
 
+    if (!IsVisible(
+            objectData,
+            pc.frameData[0]
+        ))
+    {
+        return;
+    }
+
+    uint drawIndex = 0;
+
+    InterlockedAdd(
+        pc.visibleDrawCount[0],
+        1,
+        drawIndex
+    );
+
     DrawIndexedIndirectCommand command;
 
     command.indexCount =
         objectData.indexCount;
 
-    command.instanceCount =
-        IsVisible(
-            objectData,
-            pc.frameData[0]
-        )
-            ? 1
-            : 0;
+    command.instanceCount = 1;
 
     command.firstIndex =
         objectData.firstIndex;
@@ -130,9 +141,11 @@ void cullMain(
     command.vertexOffset =
         objectData.vertexOffset;
 
+    // Preserve the source ObjectData index even though
+    // the indirect command itself is compacted.
     command.firstInstance =
         objectIndex;
 
-    pc.indirectCommands[objectIndex] =
+    pc.indirectCommands[drawIndex] =
         command;
 }
