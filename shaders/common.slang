@@ -50,10 +50,14 @@ public struct VSOutput
 public struct ObjectData {
     public float4x4 model;
     public float4x4 normalMatrix;
+
+    public float4 boundsCenter;
+    public float4 boundsExtents;
+
     public uint materialIndex;
-    uint padding0;
-    uint padding1;
-    uint padding2;
+    public uint firstIndex;
+    public uint indexCount;
+    public int vertexOffset;
 }
 
 public struct MaterialData {

@@ -124,6 +124,7 @@ add_slang_shader_target(shaders
         "${CMAKE_CURRENT_SOURCE_DIR}/shaders/FXAA.slang|FXAA"
         "${CMAKE_CURRENT_SOURCE_DIR}/shaders/ssao.slang|ssao"
         "${CMAKE_CURRENT_SOURCE_DIR}/shaders/ssaoBlur.slang|ssaoBlur"
+        "${CMAKE_CURRENT_SOURCE_DIR}/shaders/cull.slang|cullMain"
 
     COMMON_SOURCES
         "${CMAKE_CURRENT_SOURCE_DIR}/shaders/common.slang"
